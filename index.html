@@ -4,98 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock Paper Scissors</title>
+
+    <style>
+         body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #ffeded;
+            background-color: rgb(15, 24, 93);
+            margin: 0;
+            height: 100px;
+            padding-top: 60px;
+            font-size: 48px;
+        }
+        .choices {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+            gap: 30px;
+        }
+        .choices button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .choices button:hover{
+            background-color: #b63527;
+            transform: scale(1.1);
+        }
+        .score {
+            font-size: 18px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .score span {
+            font-weight: bold;
+            color: #183e19;
+        }
+
+        #results {
+            font-size: 20px;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #results.win {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #results.lose {
+            background-color: #e53935;
+            color: white;
+        }
+
+        #results.draw {
+            background-color: #fdd835;
+            color: #333;
+        }
+
+        .fade {
+            animation: fadeEffect 0.3s;
+        }
+
+        @keyframes fadeEffect {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+
+    </style>
 </head>
 <body>
+
+    <h1>Rock Paper Scissors</h1>
+    <h3>Could you beat the computer in a Rock-Paper-Scissors game? Try your luck</h3>
+
+    <div class="choices">
+        <button id="rock">Rock</button>
+        <button id="paper">Paper</button>
+        <button id="scissors">Scissors</button>
+    </div>
+
+    <div class="score">
+        <p>Player: <span id="player-score"></span></p>
+        <p>Computer: <span id="computer-score"></span></p>
+    </div>
+
+    <div id="results"></div>
+    <div id="final-result"></div>
 
     <script>
 
         function getComputerChoice(){
-            //Create an array of the three choices
             const choices = ['rock', 'paper', 'scissors'];
-
-            // generate a random number
             const randomIndex = Math.floor(Math.random() * choices.length);
-
-            //use the number to pick from the 3 choices in the array
-            const computerChoice = choices[randomIndex];
-            return computerChoice;
+            return choices[randomIndex];         
         }
-        
+     
 
-        let result;
-
-        function game(){
-
-            let playerScore=0, computerScore=0;
-
-            for(i=1; i<=5; i++){
-
-                function playRound(playerSelection, computerSelection){
-                    playerSelection = playerSelection.toLowerCase();
-                    if (playerSelection===computerSelection){
-                        result = "You Drew!";
-                        return result;
-                    }else if (playerSelection === 'rock'){
-                        if (computerSelection === 'paper'){
-                            result = "you Lose! Paper beats Rock";
-                            computerScore++;
-                            return result;
-                        }else {
-                            result = "You Win! Rock beats Scissors";
-                            playerScore++;
-                            return result;
-                        }
-                    }else if (playerSelection === 'paper'){
-                        if (computerSelection === 'rock'){
-                            result = "you Win! Paper beats Rock";
-                            playerScore++;
-                            return result;
-                        }else {
-                            result = "You Lose! Scissors beats Paper";
-                            computerScore++;
-                            return result;
-                        }
-                    }else if (playerSelection === 'scissors'){
-                        if (computerSelection === 'paper'){
-                            result = "you Win! Scissors beats Paper";
-                            playerScore++;
-                            return result;
-                        }else {
-                            result = "You Lose! Rock beats Scissors";
-                            computerScore++;
-                            return result;
-                        }
-                    }else {
-                        result = "You entered wrong input! pls try again."
-                        return result;
-                    }
-                }
-
-
-                const computerSelection = getComputerChoice();
-                console.log(computerSelection);
-                const playerSelection = prompt("enter one of the following choices: rock - paper - scissors", "rock");
+        function playRound(playerSelection, computerSelection){
+            playerSelection = playerSelection.toLowerCase();
+            if (playerSelection===computerSelection){
+                return "It is a draw!";
                 
-                console.log(playRound(playerSelection, computerSelection));
-
-
-            }
-
-
-            if (playerScore === computerScore){
-                console.log(`You drew with the computer with a score of ${playerScore} - ${computerScore} over 5 rounds. Try again!`);
-            }else if (playerScore > computerScore){
-                console.log(`Congratulations! You beat the computer ${playerScore} by ${computerScore}`);
+            }else if(playerSelection==='rock' && computerSelection==='scissors' ||
+            playerSelection==='scissors' && computerSelection==='paper' ||
+            playerSelection==='paper' && computerSelection==='rock') {
+                return `You win! ${playerSelection} beats ${computerSelection}`;
             }else {
-                console.log(`Sorry! you lost ${computerScore} by ${playerScore} to the computer. Try again!`)
+                return `You lose! ${computerSelection} beats ${playerSelection}`;
             }
-
-            
-            
         }
 
-        game();
+
+        let playerScore=0, computerScore=0;
+
+        const rock = document.querySelector('#rock');
+        const paper = document.querySelector('#paper');
+        const scissors = document.querySelector('#scissors');
+        const playerScoreSpan = document.querySelector('#player-score');
+        const computerScoreSpan = document.querySelector('#computer-score');
+        const resultsDiv = document.querySelector('#results');
+        const finalResult = document.querySelector('#final-result');
+
+
+        function updateScore(){
+            playerScoreSpan.textContent = playerScore;
+            computerScoreSpan.textContent = computerScore;
+        }
+
+        function playGame(playerSelection){
+            finalResult.textContent='';
+            const computerSelection = getComputerChoice();
+            const result = playRound(playerSelection, computerSelection);
+            if (result.includes('win')){
+                playerScore++;
+                resultsDiv.className = 'win';
+            }else if(result.includes('lose')){
+                computerScore++;
+                resultsDiv.className = 'lose';
+            }else{
+                resultsDiv.className = 'draw';
+            }
+            updateScore();
+            resultsDiv.textContent = result;
+
+            resultsDiv.classList.add('fade'); // Add a fade effect
+            setTimeout(() => {
+                resultsDiv.classList.remove('fade');
+            }, 300);
+
+
+            if (playerScore===5){
+                finalResult.textContent=`Congratulations! You are the winner. The score is ${playerScore} - ${computerScore}. TRY AGAIN!!`;
+                resetGame();
+            }else if(computerScore===5){
+                finalResult.textContent=`Sorry! Computer is the winner.The score is ${playerScore} - ${computerScore}. TRY AGAIN!!`;
+                resetGame();
+            }
+        }
+
+        function resetGame(){
+            playerScore = 0;
+            computerScore= 0;
+            updateScore();
+        }
+
         
+        rock.addEventListener('click', () => playGame('rock'));
+        paper.addEventListener('click', () => playGame('paper'));
+        scissors.addEventListener('click', () => playGame('scissors'));
 
 
     </script>
